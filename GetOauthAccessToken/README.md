@@ -17,7 +17,7 @@ The purpose of this configuration is to define credentials and parameters requir
       "tenant": "{{tenantId}}"
     },
     "clientid": "{{client_id}}",
-    "REDIRECTURI": "{{redirectUri}}",
+    "redirecturi": "{{redirectUri}}",
     "scope": "offline_access mail.read",
     "secretKey": "{{client_secret}}",
     "granttype": "authorization_code",
