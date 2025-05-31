@@ -1,3 +1,8 @@
+# PLEASE NOTE!!!!!
+
+> THE <code>.env</code> file should only be used on local environments or for simple testing. Do not rely on credentials stored in .env files on a file system. 
+
+
 
 # Microsoft OAuth2 Environment Configuration
 
