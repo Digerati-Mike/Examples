@@ -4,10 +4,11 @@
 <cfscript>
   // Get container name from form or use default
   variables.selectedContainer = trim( form.newContainerName ?: "mycontainer" );
+  variables.selectedContainer = "mycontainer"
   
 
   // Set the name of the Azure Blob Storage account
-  variables.storageName = "{{storageName}}";
+  variables.storageName = "{{storageAccount}}";
 
   // Get the cloud storage service object using the storage account name
   variables.storageService = getCloudService( variables.storageName, variables.storageName );
@@ -63,15 +64,6 @@
     <h2>Azure Blob Storage Containers</h2>
     <!-- Form to select container -->
     <form method="post" class="mb-4">
-      <div class="mb-3">
-        <label for="containerName" class="form-label">Select Container</label>
-        <select class="form-select" id="containerName" name="containerName">
-          <cfloop array="#variables.containers#" index="container">
-            <option value="#container.name#" <cfif container.name EQ variables.selectedContainer>selected</cfif>>#container.name#</option>
-          </cfloop>
-        </select>
-      </div>
-      <button type="submit" class="btn btn-primary mb-2">Change Container</button>
       <div class="mb-3 mt-4">
         <label for="newContainerName" class="form-label">Add New Container</label>
         <input type="text" class="form-control" id="newContainerName" name="newContainerName" placeholder="Enter new container name">
