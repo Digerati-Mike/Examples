@@ -2,7 +2,7 @@ component accessors = "true" {
 
     /**
     * Example of a secure init method checking each key/value in a dynamic object. 
-    * - I have not tested with complex objects (struct of structs or arrays in the object
+    * - I have not tested with complex objects (struct of structs or arrays in the object. Most likely solved with some IsSimpleValue logic. Do a PR if you find that is needed!
     */
       
     /**
