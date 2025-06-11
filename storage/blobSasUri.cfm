@@ -1,12 +1,9 @@
 <cfscript>
- 
     // Get Storage Service
     storageService = getCloudService('{{alias}}', '{{alias}}')
-   
  
     // Set the container
     Documents = storageService.container( "{{cient_container}}" , true)
-   
  
     // Set the repo Contents
     DocumentList = Documents.ListAll({
@@ -15,7 +12,6 @@
             "METADATA"
         ]
     }).response
-   
    
     // Set the Start and End Date
     StartDate = DateTimeFormat( Now(), "m/dd/yyyy" )
@@ -30,15 +26,7 @@
             "sharedAccessStartTime" : "#StartDate#"
         }
     } );
-   
-   
-    // Read the secure image
- 
-   
- 
-   
 </cfscript>
 <cfoutput>
- 
     <cflocation url = "https://storageAccountName.blob.core.windows.net/path-to-the-blob-endpoint?#sharedAccessSignature.sas#" addtoken=false />
 </cfoutput>
