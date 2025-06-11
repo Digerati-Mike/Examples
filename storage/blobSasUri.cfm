@@ -27,5 +27,5 @@
         }
     } );
 
-    location( url = "https://storageAccountName.blob.core.windows.net/path-to-the-blob-endpoint?#sharedAccessSignature.sas#", addtoken=false )
+    location( url = "https://storageAccountName.blob.core.windows.net/path-to-the-blob-endpoint?#sharedAccessSignature.sas#", addtoken=false );
 </cfscript>
