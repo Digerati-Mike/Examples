@@ -1,0 +1,450 @@
+{
+	"info": {
+		"_postman_id": "27f9ce0e-5768-468e-abd4-54264129ea81",
+		"name": "Entra Auth (authorization_code)",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "1526394",
+		"_collection_link": ""
+	},
+	"item": [
+		{
+			"name": "Step 1 - OpenID Config",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.environment.set(\"authorization_endpoint\", jsonData.authorization_endpoint);\r",
+							"pm.environment.set(\"token_endpoint\", jsonData.token_endpoint );\r",
+							"pm.environment.set(\"response_mode\", jsonData.response_modes_supported[2] );\r",
+							"pm.environment.set(\"response_type\", jsonData.response_types_supported[0] );\r",
+							"\r",
+							"\r",
+							"\r",
+							"// Check if redirect_uri exists in the scopes\r",
+							"const defaultRedirectUri = \"https://jwt.ms\";\r",
+							"const defaultScopes = \"https://graph.microsoft.com/.default openid email\";\r",
+							"\r",
+							"if (pm.environment.get('redirect_uri') === undefined) {\r",
+							"\r",
+							"    pm.environment.set('redirect_uri', defaultRedirectUri);\r",
+							"}\r",
+							"\r",
+							"\r",
+							"if (pm.environment.get('scope') === undefined) {\r",
+							"\r",
+							"    pm.environment.set('scope', defaultScopes);\r",
+							"}\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"const response = pm.response.json();\r",
+							"\r",
+							"// Test for status code\", jsonData.response_types_supported[3] );\r",
+							"\r",
+							"// Test for status code\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Test for response time\r",
+							"pm.test(\"Response time is less than 2000ms\", () => {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+							"});\r",
+							"\r",
+							"// Test for Content-Type header\r",
+							"pm.test(\"Content-Type is application/json; charset=utf-8\", () => {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json; charset=utf-8');\r",
+							"});\r",
+							"\r",
+							"// Test for all supported response modes\r",
+							"pm.test(\"Response modes supported are valid\", () => {\r",
+							"    const supportedModes = [\"query\", \"fragment\",\"form_post\"];\r",
+							"    pm.expect(response.response_modes_supported).to.eql(supportedModes);\r",
+							"});\r",
+							"\r",
+							"// Test for all supported scopes\r",
+							"pm.test(\"Scopes supported are valid\", () => {\r",
+							"    const supportedScopes = [\"openid\", \"profile\",\"email\",\"offline_access\"];\r",
+							"    pm.expect(response.scopes_supported).to.eql(supportedScopes);\r",
+							"});\r",
+							"\r",
+							"// Test for claims supported\r",
+							"pm.test(\"Claims supported include 'sub' and 'iss'\", () => {\r",
+							"    const claimsSupported = [\"sub\", \"iss\"];\r",
+							"    claimsSupported.forEach(claim => {\r",
+							"        pm.expect(response.claims_supported).to.include(claim);\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"// Test for the presence of required fields\r",
+							"const requiredFields = [\r",
+							"    \"token_endpoint\",\r",
+							"    \"jwks_uri\",\r",
+							"    \"issuer\",\r",
+							"    \"userinfo_endpoint\",\r",
+							"    \"authorization_endpoint\",\r",
+							"    \"device_authorization_endpoint\",\r",
+							"    \"end_session_endpoint\",\r",
+							"    \"cloud_instance_name\",\r",
+							"    \"cloud_graph_host_name\",\r",
+							"    \"msgraph_host\",\r",
+							"    \"rbac_url\"\r",
+							"];\r",
+							"\r",
+							"requiredFields.forEach(field => {\r",
+							"    pm.test(`${field} exists in the response`, () => {\r",
+							"        pm.expect(response).to.have.property(field);\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://login.{{cloud_instance_name}}/{{tenant}}/v2.0/.well-known/openid-configuration",
+					"protocol": "https",
+					"host": [
+						"login",
+						"{{cloud_instance_name}}"
+					],
+					"path": [
+						"{{tenant}}",
+						"v2.0",
+						".well-known",
+						"openid-configuration"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Step 2 - Authorization Request ( DO NOT RUN )",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://login.{{cloud_instance_name}}/{{tenant}}/oauth2/v2.0/authorize?client_id={{client_id}}&response_type={{response_type}}&redirect_uri={{redirect_uri}}&response_mode={{response_mode}}&scope={{scope}}&state={{$guid}}&nonce={{$guid}}",
+					"protocol": "https",
+					"host": [
+						"login",
+						"{{cloud_instance_name}}"
+					],
+					"path": [
+						"{{tenant}}",
+						"oauth2",
+						"v2.0",
+						"authorize"
+					],
+					"query": [
+						{
+							"key": "client_id",
+							"value": "{{client_id}}"
+						},
+						{
+							"key": "response_type",
+							"value": "{{response_type}}"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "{{redirect_uri}}"
+						},
+						{
+							"key": "response_mode",
+							"value": "{{response_mode}}"
+						},
+						{
+							"key": "scope",
+							"value": "{{scope}}"
+						},
+						{
+							"key": "state",
+							"value": "{{$guid}}"
+						},
+						{
+							"key": "nonce",
+							"value": "{{$guid}}"
+						}
+					]
+				},
+				"description": "A sign in request to begin the OAuth 2.0 code flow.  Be sure to copy & paste into a browser! Running this request in Postman will just return you the HTML of our login pages."
+			},
+			"response": []
+		},
+		{
+			"name": "Step 3 - Get Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"var tenantId = pm.environment.get( \"tenantId\" );\r",
+							"pm.environment.set(\"access_token\", jsonData.access_token);\r",
+							"pm.environment.set(\"refresh_token\", jsonData.refresh_token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "client_id",
+							"value": "{{client_id}}",
+							"type": "text"
+						},
+						{
+							"key": "scope",
+							"value": "{{scope}}",
+							"type": "text"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "{{redirect_uri}}",
+							"type": "text"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "text"
+						},
+						{
+							"key": "code",
+							"value": "1.AUUAt9DRS32XskCE8TmgHrSa0BpW0oBw-P9HrZ5LlDhQjPtfAVpFAA.AgABBAIAAABVrSpeuWamRam2jAF1XRQEAwDs_wUA9P8df7e69ZRCgmXTp1dfE011y8hTpqHvVAYy-jNaU00zP1UHToNzG4dQ1NNpA8-d3TrpXyjao71LOikcxN50C4YHbAY7lzp3hzU82bSazbbQlX9YPMGwYk_7i000y0ZO1EvuY42DAzhwxmFhTmGyXpVqzAAajrYhML12E38rBGRL760QHh7WKXOUEaR0y7YUCabST21JJ5LWG50qv1Uk7bhYxgqNlshPskbvGb0JS7Cq5mOKnaVZH2u-g6R8LpXb4sVWxywWnR4-9_eAOlUSpSTx_GjC5IfGz1uhkkBOkzKtMZ1khhAYgd59vv16I7_XcAE3HS1BsWS58JAv90KD26EN3nN3rE2pTQmurX7VWfwclD2jLe3FLSQMbul4kBww7N7dM_3yorXPYdCd5lPlL15p8maZ1_RJLvHWnQc4nO7J4Xzy4KOMIPLbQw1styzPvuA63ZuKsgZ9knhE3jNCo5G3FLd1rEHwV6YrWHArV0S-VmB1HzOMDvQcWYgZTVs2EmqZKXe4xWCyeY3iwIRmyDEXE6rH98hJ4WuXqhI1639i2XKnGvCPzG5pkaNVpLjQLql8YTIZ0Y3pOIVnNgbfsuwZ_ZqFb4mqN0CJUATmSvqGu91sVasB2BqYEfB7ndeAMxLYIcsqxHyFAt80pOzohyWziAU-rewWthS3vx-UKFGDIpu-mT7rDhIkaGCFOX1BQfmwgoxLWP60JmEtlidfhXi0LK-z_FokrxtSNoMAlcMj-99sjQiI8hqEbWhDMGyWH2c9h09gHTDO-koFl9xQGMt1rPZEMUAG9eBllbSnRMGGh-49jPVqSbLNyUbLQO6b0lfwMLFkS49iA8NETV1aeGM",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "{{client_secret}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://login.{{cloud_instance_name}}/{{tenant}}/oauth2/v2.0/token",
+					"protocol": "https",
+					"host": [
+						"login",
+						"{{cloud_instance_name}}"
+					],
+					"path": [
+						"{{tenant}}",
+						"oauth2",
+						"v2.0",
+						"token"
+					]
+				},
+				"description": "The POST request to exchange an auth code for an access token.  Be sure to replace the code with your own, that you recieved after signing in!"
+			},
+			"response": []
+		},
+		{
+			"name": "Step 4 - API Action",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{access_token}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"message\": {\r\n        \"subject\": \"Meet for lunch?\",\r\n        \"body\": {\r\n            \"contentType\": \"Text\",\r\n            \"content\": \"The new cafeteria is open.\"\r\n        },\r\n        \"toRecipients\": [\r\n            {\r\n                \"emailAddress\": {\r\n                    \"address\": \"mbh@media3.net\"\r\n                }\r\n            }\r\n        ]\r\n    }\r\n}"
+				},
+				"url": {
+					"raw": "https://graph.microsoft.com/v1.0/me",
+					"protocol": "https",
+					"host": [
+						"graph",
+						"microsoft",
+						"com"
+					],
+					"path": [
+						"v1.0",
+						"me"
+					]
+				},
+				"description": "The POST request to exchange an auth code for an access token.  Be sure to replace the code with your own, that you recieved after signing in!"
+			},
+			"response": []
+		},
+		{
+			"name": "Admin Consent",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"pm.environment.set(\"authorization_endpoint\", jsonData.authorization_endpoint);\r",
+							"pm.environment.set(\"token_endpoint\", jsonData.token_endpoint );\r",
+							"pm.environment.set(\"response_mode\", jsonData.response_modes_supported[2] );\r",
+							"pm.environment.set(\"response_type\", jsonData.response_types_supported[0] );\r",
+							"\r",
+							"\r",
+							"\r",
+							"// Check if redirect_uri exists in the scopes\r",
+							"const defaultRedirectUri = \"https://jwt.ms\";\r",
+							"const defaultScopes = \"https://graph.microsoft.com/.default openid email\";\r",
+							"\r",
+							"if (pm.environment.get('redirect_uri') === undefined) {\r",
+							"\r",
+							"    pm.environment.set('redirect_uri', defaultRedirectUri);\r",
+							"}\r",
+							"\r",
+							"\r",
+							"if (pm.environment.get('scope') === undefined) {\r",
+							"\r",
+							"    pm.environment.set('scope', defaultScopes);\r",
+							"}\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"\r",
+							"const response = pm.response.json();\r",
+							"\r",
+							"// Test for status code\", jsonData.response_types_supported[3] );\r",
+							"\r",
+							"// Test for status code\r",
+							"pm.test(\"Status code is 200\", () => {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"// Test for response time\r",
+							"pm.test(\"Response time is less than 2000ms\", () => {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+							"});\r",
+							"\r",
+							"// Test for Content-Type header\r",
+							"pm.test(\"Content-Type is application/json; charset=utf-8\", () => {\r",
+							"    pm.expect(pm.response.headers.get('Content-Type')).to.eql('application/json; charset=utf-8');\r",
+							"});\r",
+							"\r",
+							"// Test for all supported response modes\r",
+							"pm.test(\"Response modes supported are valid\", () => {\r",
+							"    const supportedModes = [\"query\", \"fragment\",\"form_post\"];\r",
+							"    pm.expect(response.response_modes_supported).to.eql(supportedModes);\r",
+							"});\r",
+							"\r",
+							"// Test for all supported scopes\r",
+							"pm.test(\"Scopes supported are valid\", () => {\r",
+							"    const supportedScopes = [\"openid\", \"profile\",\"email\",\"offline_access\"];\r",
+							"    pm.expect(response.scopes_supported).to.eql(supportedScopes);\r",
+							"});\r",
+							"\r",
+							"// Test for claims supported\r",
+							"pm.test(\"Claims supported include 'sub' and 'iss'\", () => {\r",
+							"    const claimsSupported = [\"sub\", \"iss\"];\r",
+							"    claimsSupported.forEach(claim => {\r",
+							"        pm.expect(response.claims_supported).to.include(claim);\r",
+							"    });\r",
+							"});\r",
+							"\r",
+							"// Test for the presence of required fields\r",
+							"const requiredFields = [\r",
+							"    \"token_endpoint\",\r",
+							"    \"jwks_uri\",\r",
+							"    \"issuer\",\r",
+							"    \"userinfo_endpoint\",\r",
+							"    \"authorization_endpoint\",\r",
+							"    \"device_authorization_endpoint\",\r",
+							"    \"end_session_endpoint\",\r",
+							"    \"cloud_instance_name\",\r",
+							"    \"cloud_graph_host_name\",\r",
+							"    \"msgraph_host\",\r",
+							"    \"rbac_url\"\r",
+							"];\r",
+							"\r",
+							"requiredFields.forEach(field => {\r",
+							"    pm.test(`${field} exists in the response`, () => {\r",
+							"        pm.expect(response).to.have.property(field);\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://login.microsoftonline.com/{{tenant}}/adminconsent?client_id={{client_id}}",
+					"protocol": "https",
+					"host": [
+						"login",
+						"microsoftonline",
+						"com"
+					],
+					"path": [
+						"{{tenant}}",
+						"adminconsent"
+					],
+					"query": [
+						{
+							"key": "client_id",
+							"value": "{{client_id}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
