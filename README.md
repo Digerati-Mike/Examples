@@ -9,3 +9,5 @@
 4.) Postman Collections
 
 5.) MGT Dev Example
+
+6.) smtp
