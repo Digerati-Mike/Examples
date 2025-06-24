@@ -36,3 +36,30 @@
     <pre>{{ JSON.stringify(value, null, 2) }}</pre>
   </template>
 </mgt-get>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const mgtLogin = document.querySelector('mgt-login');
+  
+  mgtLogin.addEventListener('loginInitiated', (e) => {
+    console.log('Login Initiated');
+  });
+
+
+  mgtLogin.addEventListener('loginCompleted', async () => {
+    console.log('Login Completed');
+  });
+
+  mgtLogin.addEventListener('loginFailed', (e) => {
+    console.error('Login Failed', e.detail);
+  });
+
+  mgtLogin.addEventListener('logoutInitiated', () => {
+    console.log('Logout Initiated');
+  });
+
+  mgtLogin.addEventListener('logoutCompleted', () => {
+    console.log('Logout Completed');
+  });
+});
+</script>
